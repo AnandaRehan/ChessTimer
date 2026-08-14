@@ -1,0 +1,6 @@
+{
+  "name": "Chess Timer",
+  "description": "A modern, highly-responsive digital chess clock with custom time controls, increment, move counter, and sound/haptic feedback for portrait and landscape gameplay.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
