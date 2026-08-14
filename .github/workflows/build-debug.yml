@@ -1,0 +1,42 @@
+name: Build Debug APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-debug:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Generate Gradle Wrapper if missing
+        run: |
+          if [ ! -f ./gradlew ]; then
+            gradle wrapper
+          fi
+
+      - name: Beri Izin Akses Gradle
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon --no-configuration-cache --stacktrace
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v6
+        with:
+          name: ChessTimer-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
