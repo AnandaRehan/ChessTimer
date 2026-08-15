@@ -51,6 +51,24 @@ class AudioHapticHelper(context: Context) {
         }
     }
 
+    fun playShuffleTick(soundEnabled: Boolean) {
+        if (!soundEnabled) return
+        try {
+            toneGenerator?.startTone(ToneGenerator.TONE_PROP_PROMPT, 20)
+        } catch (_: Exception) {
+            // Ignore audio issues
+        }
+    }
+
+    fun playShuffleDoneSound(soundEnabled: Boolean) {
+        if (!soundEnabled) return
+        try {
+            toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 120)
+        } catch (_: Exception) {
+            // Ignore audio issues
+        }
+    }
+
     fun triggerTapHaptic(hapticEnabled: Boolean) {
         if (!hapticEnabled || vibrator == null || !vibrator.hasVibrator()) return
         try {
@@ -61,6 +79,38 @@ class AudioHapticHelper(context: Context) {
             } else {
                 @Suppress("DEPRECATION")
                 vibrator.vibrate(25)
+            }
+        } catch (_: Exception) {
+            // Ignore vibration issues
+        }
+    }
+
+    fun triggerShuffleTickHaptic(hapticEnabled: Boolean) {
+        if (!hapticEnabled || vibrator == null || !vibrator.hasVibrator()) return
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(15, VibrationEffect.DEFAULT_AMPLITUDE)
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(15)
+            }
+        } catch (_: Exception) {
+            // Ignore vibration issues
+        }
+    }
+
+    fun triggerShuffleDoneHaptic(hapticEnabled: Boolean) {
+        if (!hapticEnabled || vibrator == null || !vibrator.hasVibrator()) return
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val timings = longArrayOf(0, 40, 60, 80)
+                val amplitudes = intArrayOf(0, 200, 0, 255)
+                vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(longArrayOf(0, 40, 60, 80), -1)
             }
         } catch (_: Exception) {
             // Ignore vibration issues

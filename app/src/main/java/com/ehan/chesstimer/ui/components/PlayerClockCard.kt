@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ehan.chesstimer.data.ChessColor
 import com.ehan.chesstimer.data.GameStatus
 import com.ehan.chesstimer.data.PlayerSide
 import com.ehan.chesstimer.data.PlayerState
@@ -158,7 +159,7 @@ fun PlayerClockCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Header Row: Player Title with dot badge
+            // Header Row: Player Title with color badge and piece icon
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -168,29 +169,46 @@ fun PlayerClockCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(start = 4.dp, top = 2.dp)
                 ) {
+                    val isWhite = playerState.color == ChessColor.WHITE
                     Box(
                         modifier = Modifier
-                            .size(10.dp)
+                            .size(18.dp)
                             .clip(CircleShape)
                             .background(
-                                if (playerState.side == PlayerSide.PLAYER_1) {
+                                if (isWhite) {
                                     if (isActive && isRunning) ActiveCardText else Color.White
                                 } else {
-                                    if (isActive && isRunning) ActiveCardText.copy(alpha = 0.4f) else Color(0xFF1E293B)
+                                    if (isActive && isRunning) ActiveCardText.copy(alpha = 0.35f) else Color(0xFF1E293B)
                                 }
                             )
                             .border(
                                 width = 1.dp,
-                                color = if (isActive && isRunning) ActiveCardText.copy(alpha = 0.5f) else Color.White.copy(alpha = 0.3f),
+                                color = if (isActive && isRunning) ActiveCardText.copy(alpha = 0.5f) else Color.White.copy(alpha = 0.35f),
                                 shape = CircleShape
-                            )
-                    )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = playerState.color.symbol,
+                            fontSize = 11.sp,
+                            color = if (isWhite) {
+                                Color(0xFF1E293B)
+                            } else {
+                                Color.White
+                            },
+                            lineHeight = 11.sp
+                        )
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
+
+                    val slotName = if (playerState.side == PlayerSide.PLAYER_1) "P1" else "P2"
+                    val colorLabel = "${playerState.color.label.uppercase()} (${playerState.color.enLabel.uppercase()})"
+
                     Text(
-                        text = if (playerState.side == PlayerSide.PLAYER_1) "PLAYER ONE (WHITE)" else "PLAYER TWO (BLACK)",
+                        text = "$slotName • $colorLabel",
                         style = MaterialTheme.typography.labelMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = 2.sp,
+                            letterSpacing = 1.5.sp,
                             color = subContentColor
                         )
                     )
@@ -391,6 +409,7 @@ fun PlayerClockCard(
                         )
                     }
                     gameStatus == GameStatus.NOT_STARTED -> {
+                        val isWhite = playerState.color == ChessColor.WHITE
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
@@ -398,15 +417,15 @@ fun PlayerClockCard(
                             Icon(
                                 imageVector = Icons.Default.TouchApp,
                                 contentDescription = "Tap to start",
-                                tint = subContentColor.copy(alpha = 0.8f),
+                                tint = if (isWhite) ActiveCardText else subContentColor.copy(alpha = 0.8f),
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "TAP TO START",
+                                text = if (isWhite) "PUTIH MULAI DULUAN • TAP" else "MENUNGGU LANGKAH PUTIH",
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = subContentColor.copy(alpha = 0.85f),
+                                    color = if (isWhite) Color.White else subContentColor.copy(alpha = 0.85f),
                                     letterSpacing = 1.sp
                                 )
                             )

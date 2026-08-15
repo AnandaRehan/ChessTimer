@@ -53,9 +53,17 @@ enum class TimeCategory(val label: String) {
     CUSTOM("Custom")
 }
 
+enum class ChessColor(val label: String, val enLabel: String, val symbol: String) {
+    WHITE("Putih", "White", "♔"),
+    BLACK("Hitam", "Black", "♚");
+
+    val opponent: ChessColor
+        get() = if (this == WHITE) BLACK else WHITE
+}
+
 enum class PlayerSide {
-    PLAYER_1, // Bottom / White
-    PLAYER_2  // Top / Black
+    PLAYER_1, // Bottom / Slot 1
+    PLAYER_2  // Top / Slot 2
 }
 
 enum class GameStatus {
@@ -68,6 +76,7 @@ enum class GameStatus {
 data class PlayerState(
     val side: PlayerSide,
     val name: String,
+    val color: ChessColor = if (side == PlayerSide.PLAYER_1) ChessColor.WHITE else ChessColor.BLACK,
     val timeRemainingMillis: Long,
     val moveCount: Int = 0,
     val isFlagged: Boolean = false

@@ -21,11 +21,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeMute
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -71,6 +73,7 @@ fun CenterControlBar(
     onTogglePlayPause: () -> Unit,
     onReset: () -> Unit,
     onOpenSettings: () -> Unit,
+    onRandomize: () -> Unit,
     onToggleSound: () -> Unit,
     onToggleHaptic: () -> Unit,
     modifier: Modifier = Modifier
@@ -133,11 +136,11 @@ fun CenterControlBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 8.dp),
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left Group: Settings & Time Control Badge
+            // Left Group: Settings & Shuffle / Randomize
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -145,9 +148,9 @@ fun CenterControlBar(
                 FilledTonalIconButton(
                     onClick = onOpenSettings,
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(44.dp)
                         .testTag("settings_button"),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(14.dp),
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                         containerColor = ControlButtonBg,
                         contentColor = ControlIconTint
@@ -156,7 +159,28 @@ fun CenterControlBar(
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Settings",
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                // Shuffle / Randomize Button
+                FilledTonalIconButton(
+                    onClick = onRandomize,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .testTag("shuffle_sides_button"),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = if (gameStatus == GameStatus.NOT_STARTED) AccentLavender.copy(alpha = 0.18f) else ControlButtonBg,
+                        contentColor = if (gameStatus == GameStatus.NOT_STARTED) AccentLavender else ControlIconTint
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Casino,
+                        contentDescription = "Acak Sisi Pemain",
+                        modifier = Modifier.size(22.dp)
                     )
                 }
 
@@ -164,30 +188,30 @@ fun CenterControlBar(
 
                 // Time Control Badge
                 Surface(
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(14.dp),
                     color = ControlButtonBg,
                     modifier = Modifier
-                        .clip(RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(14.dp))
                         .clickable(onClick = onOpenSettings)
                         .testTag("time_control_badge")
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(8.dp)
+                                .size(7.dp)
                                 .clip(CircleShape)
                                 .background(AccentLavender)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             text = timeControl.name,
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = ControlIconTint,
-                                fontSize = 12.sp
+                                fontSize = 11.sp
                             )
                         )
                     }
@@ -203,7 +227,7 @@ fun CenterControlBar(
                 FilledTonalIconButton(
                     onClick = onTogglePlayPause,
                     modifier = Modifier
-                        .size(width = 72.dp, height = 46.dp)
+                        .size(width = 68.dp, height = 44.dp)
                         .testTag("play_pause_button"),
                     shape = RoundedCornerShape(50),
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
@@ -214,7 +238,7 @@ fun CenterControlBar(
                     Icon(
                         imageVector = if (gameStatus == GameStatus.RUNNING) Icons.Default.Pause else Icons.Default.PlayArrow,
                         contentDescription = if (gameStatus == GameStatus.RUNNING) "Pause Game" else "Start / Resume Game",
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(26.dp)
                     )
                 }
 
@@ -246,9 +270,9 @@ fun CenterControlBar(
                 FilledTonalIconButton(
                     onClick = onToggleSound,
                     modifier = Modifier
-                        .size(38.dp)
+                        .size(36.dp)
                         .testTag("sound_toggle_button"),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(10.dp),
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                         containerColor = ControlButtonBg,
                         contentColor = if (soundEnabled) ControlIconTint else ControlIconDim
@@ -257,7 +281,7 @@ fun CenterControlBar(
                     Icon(
                         imageVector = if (soundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeMute,
                         contentDescription = if (soundEnabled) "Sound On" else "Sound Off",
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
 
@@ -267,9 +291,9 @@ fun CenterControlBar(
                 FilledTonalIconButton(
                     onClick = onToggleHaptic,
                     modifier = Modifier
-                        .size(38.dp)
+                        .size(36.dp)
                         .testTag("haptic_toggle_button"),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(10.dp),
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                         containerColor = ControlButtonBg,
                         contentColor = if (hapticEnabled) ControlIconTint else ControlIconDim
@@ -278,7 +302,7 @@ fun CenterControlBar(
                     Icon(
                         imageVector = Icons.Default.GraphicEq,
                         contentDescription = if (hapticEnabled) "Vibration On" else "Vibration Off",
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
 
@@ -294,9 +318,9 @@ fun CenterControlBar(
                         }
                     },
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(44.dp)
                         .testTag("reset_button"),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(14.dp),
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                         containerColor = ControlButtonBg,
                         contentColor = ControlIconTint
@@ -305,7 +329,7 @@ fun CenterControlBar(
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Reset Game",
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(22.dp)
                     )
                 }
             }

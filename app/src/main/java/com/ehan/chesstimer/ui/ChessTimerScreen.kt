@@ -30,6 +30,7 @@ import com.ehan.chesstimer.data.PlayerSide
 import com.ehan.chesstimer.ui.components.CenterControlBar
 import com.ehan.chesstimer.ui.components.PlayerClockCard
 import com.ehan.chesstimer.ui.components.SettingsDialog
+import com.ehan.chesstimer.ui.components.ShuffleDialog
 import com.ehan.chesstimer.ui.theme.DarkBackground
 import com.ehan.chesstimer.viewmodel.ChessTimerViewModel
 
@@ -101,7 +102,7 @@ fun ChessTimerScreen(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 12.dp)
-                        .width(420.dp)
+                        .width(440.dp)
                 ) {
                     CenterControlBar(
                         gameStatus = uiState.gameStatus,
@@ -111,6 +112,7 @@ fun ChessTimerScreen(
                         onTogglePlayPause = { viewModel.togglePauseResume() },
                         onReset = { viewModel.resetGame() },
                         onOpenSettings = { viewModel.openCustomDialog() },
+                        onRandomize = { viewModel.startRandomizeAnimation() },
                         onToggleSound = { viewModel.toggleSound() },
                         onToggleHaptic = { viewModel.toggleHaptic() }
                     )
@@ -121,7 +123,7 @@ fun ChessTimerScreen(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Top: Player 2 (Black) - Rotated 180 degrees for opposite player
+                    // Top: Player 2 (Rotated 180 degrees for opposite player)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -137,7 +139,7 @@ fun ChessTimerScreen(
                         )
                     }
 
-                    // Bottom: Player 1 (White) - Normal orientation
+                    // Bottom: Player 1 (Normal orientation)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -159,7 +161,7 @@ fun ChessTimerScreen(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
+                        .padding(horizontal = 8.dp)
                 ) {
                     CenterControlBar(
                         gameStatus = uiState.gameStatus,
@@ -169,11 +171,24 @@ fun ChessTimerScreen(
                         onTogglePlayPause = { viewModel.togglePauseResume() },
                         onReset = { viewModel.resetGame() },
                         onOpenSettings = { viewModel.openCustomDialog() },
+                        onRandomize = { viewModel.startRandomizeAnimation() },
                         onToggleSound = { viewModel.toggleSound() },
                         onToggleHaptic = { viewModel.toggleHaptic() }
                     )
                 }
             }
+        }
+
+        // Shuffle / Randomize Sides Animated Dialog
+        if (uiState.isShuffleModalOpen) {
+            ShuffleDialog(
+                isShuffling = uiState.isShuffling,
+                displayColorP1 = uiState.shuffleDisplayColorP1,
+                resultSummary = uiState.shuffleResultSummary,
+                onReShuffle = { viewModel.startRandomizeAnimation() },
+                onManualSwap = { viewModel.swapSides() },
+                onDismiss = { viewModel.dismissShuffleModal() }
+            )
         }
 
         // Settings Bottom Sheet / Modal
