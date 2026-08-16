@@ -19,7 +19,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
 
       - name: Decode Keystore from Secrets (if provided)
         env:
@@ -54,11 +56,9 @@ jobs:
       - name: Generate Gradle Wrapper if missing
         run: |
           if [ ! -f ./gradlew ]; then
-            gradle wrapper
+            gradle wrapper --gradle-version 8.13
           fi
-
-      - name: Beri Izin Akses Gradle
-        run: chmod +x gradlew
+          chmod +x gradlew || true
 
       - name: Build Release APK
         env:
